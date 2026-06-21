@@ -14,7 +14,9 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{ts,tsx}": ["eslint --fix"]
+    "**/*.{ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "graphql": "^16.14.2",
@@ -35,6 +37,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "eslint-plugin-security": "^4.0.1",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.7",
