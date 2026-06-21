@@ -18,6 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     setMessage("");
+    setLockedMessage("");
     try {
       const result = await login(email, password);
       setMessage(result.message);

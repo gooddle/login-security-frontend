@@ -36,4 +36,16 @@ describe("LockoutModal", () => {
     fireEvent.click(screen.getByRole("button", { name: "확인" }));
     expect(onClose).toHaveBeenCalledOnce();
   });
+
+  it("Escape 키 입력 시 onClose가 호출된다", () => {
+    const onClose = vi.fn();
+    render(
+      <LockoutModal
+        message="계정이 잠겼습니다. 29분 59초 후 다시 시도하세요"
+        onClose={onClose}
+      />
+    );
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    expect(onClose).toHaveBeenCalledOnce();
+  });
 });
