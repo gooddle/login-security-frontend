@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { login } from "@/lib/graphql";
+import LockoutModal from "@/app/components/LockoutModal";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lockedMessage, setLockedMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,7 +23,11 @@ export default function LoginPage() {
       setMessage(result.message);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "오류가 발생했습니다";
-      setError(msg.includes("인증 실패") ? "인증 실패" : msg);
+      if (msg.includes("잠겼습니다")) {
+        setLockedMessage(msg);
+      } else {
+        setError(msg.includes("인증 실패") ? "인증 실패" : msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -29,6 +35,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      {lockedMessage && (
+        <LockoutModal
+          message={lockedMessage}
+          onClose={() => setLockedMessage("")}
+        />
+      )}
       <div className="w-full max-w-sm bg-white rounded-xl shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">로그인</h1>
         <form onSubmit={handleSubmit} className="space-y-4">

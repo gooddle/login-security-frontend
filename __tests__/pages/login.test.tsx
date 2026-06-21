@@ -33,4 +33,40 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: "로그인" }));
     await waitFor(() => expect(screen.getByText(/인증 실패/)).toBeInTheDocument());
   });
+
+  it("계정 잠금 에러 시 모달이 표시된다", async () => {
+    vi.mocked(login).mockRejectedValueOnce(
+      new Error("계정이 잠겼습니다. 29분 59초 후 다시 시도하세요")
+    );
+    render(<LoginPage />);
+    fireEvent.change(screen.getByPlaceholderText("이메일"), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("비밀번호"), {
+      target: { value: "wrong" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "로그인" }));
+    await waitFor(() =>
+      expect(screen.getByText("계정이 잠겼습니다")).toBeInTheDocument()
+    );
+  });
+
+  it("잠금 모달 확인 버튼 클릭 시 모달이 닫힌다", async () => {
+    vi.mocked(login).mockRejectedValueOnce(
+      new Error("계정이 잠겼습니다. 29분 59초 후 다시 시도하세요")
+    );
+    render(<LoginPage />);
+    fireEvent.change(screen.getByPlaceholderText("이메일"), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("비밀번호"), {
+      target: { value: "wrong" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "로그인" }));
+    await waitFor(() => screen.getByText("계정이 잠겼습니다"));
+    fireEvent.click(screen.getByRole("button", { name: "확인" }));
+    await waitFor(() =>
+      expect(screen.queryByText("계정이 잠겼습니다")).not.toBeInTheDocument()
+    );
+  });
 });
